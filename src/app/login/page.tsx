@@ -1,16 +1,45 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import axios from "axios";
 
-const login = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
-   
+    password: "",
   });
 
   const [error, setError] = useState("");
+  const router = useRouter();
+  const [buttonDisabled, setButtonDisabled] = useState(true); // Default button is disabled
+  const [loading, setLoading] = useState(false);
+
+  // Handle form submission
+  const onLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/users/login", formData);
+      console.log("Login success", response.data);
+      toast.success("Login successful");
+      router.push("/profile");
+    } catch (error: any) {
+      console.log("Error:", error);
+      toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Enable/disable button based on form input
+  useEffect(() => {
+    if (formData.email && formData.password) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -23,33 +52,19 @@ const login = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!formData.name || !formData.email ) {
+    if (!formData.email || !formData.password) {
       setError("All fields are required.");
       return;
     }
 
     setError("");
-    console.log("Form Data:", formData);
-    alert("Signup successful!");
-    setFormData({ name: "", email: "",}); // Clear the form
+    onLogin(); // Call the login function on successful validation
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>login</h1>
+      <h1 style={styles.title}>Login</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            style={styles.input}
-          />
-        </div>
-
         <div style={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -62,12 +77,26 @@ const login = () => {
           />
         </div>
 
-        
+        <div style={styles.formGroup}>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            style={styles.input}
+          />
+        </div>
 
         {error && <p style={styles.error}>{error}</p>}
 
-        <button type="submit" style={styles.button}>
-          Sign Up
+        <button
+          type="submit"
+          style={styles.button}
+          disabled={buttonDisabled || loading}
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <Link href="/signup">Go to signup page</Link>
@@ -97,7 +126,6 @@ const styles = {
     flexDirection: "column" as const,
     color: "black",
   },
-
   formGroup: {
     marginBottom: "15px",
     color: "black",
@@ -126,4 +154,4 @@ const styles = {
   },
 };
 
-export default login;
+export default Login;

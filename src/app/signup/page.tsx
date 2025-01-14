@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +12,25 @@ const Signup = () => {
     password: "",
   });
 
-  const [error, setError] = useState("");
+  const router = useRouter();
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const onSignup = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/users/signup", formData);
+      console.log("Signup success", response.data);
+      toast.success("Signup successful");
+      router.push("/login");
+    } catch (error: any) {
+      console.log("Axios error:", error);
+      console.log("Axios error response:", error.response?.data);
+      toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -19,25 +39,24 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.password) {
-      setError("All fields are required.");
-      return;
+  useEffect(() => {
+    if (formData.name && formData.email && formData.password) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
     }
-
-    setError("");
-    console.log("Form Data:", formData);
-    alert("Signup successful!");
-    setFormData({ name: "", email: "", password: "" }); // Clear the form
-  };
+  }, [formData]);
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Sign Up</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
+      <h1 style={styles.title}>{loading ? "Processing..." : "Signup"}</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSignup();
+        }}
+        style={styles.form}
+      >
         <div style={styles.formGroup}>
           <label htmlFor="name">Name</label>
           <input
@@ -74,10 +93,12 @@ const Signup = () => {
           />
         </div>
 
-        {error && <p style={styles.error}>{error}</p>}
-
-        <button type="submit" style={styles.button}>
-          Sign Up
+        <button
+          type="submit"
+          style={styles.button}
+          disabled={buttonDisabled || loading}
+        >
+          {loading ? "Signing up..." : buttonDisabled ? "Please fill all fields" : "Sign Up"}
         </button>
 
         <Link href="/login">Go to login page</Link>
@@ -107,7 +128,6 @@ const styles = {
     flexDirection: "column" as const,
     color: "black",
   },
-
   formGroup: {
     marginBottom: "15px",
     color: "black",
@@ -128,11 +148,6 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
-  },
-  error: {
-    fontSize: "12px",
-    color: "red",
-    marginBottom: "15px",
   },
 };
 
