@@ -4,7 +4,10 @@ import bcryptjs from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 // Establish database connection
-connect();
+console.log("Connecting to database...");
+
+await connect();
+console.log("Connected to database");
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Save new user to the database
     const newUser = new User({
-      name: name,
+      name,
       email,
       password: hashedPassword,
     });
