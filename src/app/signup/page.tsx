@@ -19,7 +19,10 @@ const Signup = () => {
   const onSignup = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/signup", formData);
+      const response = await axios.post("/api/users/signup", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       console.log("Signup success", response.data);
       toast.success("Signup successful");
       router.push("/login");
@@ -98,7 +101,11 @@ const Signup = () => {
           style={styles.button}
           disabled={buttonDisabled || loading}
         >
-          {loading ? "Signing up..." : buttonDisabled ? "Please fill all fields" : "Sign Up"}
+          {loading
+            ? "Signing up..."
+            : buttonDisabled
+            ? "Please fill all fields"
+            : "Sign Up"}
         </button>
 
         <Link href="/login">Go to login page</Link>
@@ -152,3 +159,6 @@ const styles = {
 };
 
 export default Signup;
+function setError(arg0: string) {
+  throw new Error("Function not implemented.");
+}
