@@ -36,27 +36,38 @@ const Profile = () => {
   };
 
   return (
-    <div className="text-4xl text-center items-center">
-      <h1>Profile</h1>
-      <h2 className="p-3 rounded bg-green-500 ">
-        {data === "nothing" ? (
-          "No Data"
-        ) : (
-          <Link href={`/profile/${data}`} className="text-white bg-yellow-50">{data}</Link>
-        )}
-      </h2>
-      <button
-        onClick={logout}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Logout
-      </button>
-      <button
-        onClick={getUserDetials}
-        className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Get User Details
-      </button>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800">
+          Profile
+        </h1>
+        <div className="p-4 rounded-lg bg-green-500 text-center">
+          {data === "nothing" ? (
+            <span className="text-white text-lg">No Data</span>
+          ) : (
+            <Link
+              href={`/profile/${data}`}
+              className="text-white bg-yellow-500 px-3 py-1 rounded-lg hover:bg-yellow-600 transition"
+            >
+              {data}
+            </Link>
+          )}
+        </div>
+        <div className="flex flex-col space-y-4">
+          <button
+            onClick={logout}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg shadow-md transition"
+          >
+            Logout
+          </button>
+          <button
+            onClick={getUserDetials}
+            className="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 rounded-lg shadow-md transition"
+          >
+            Get User Details
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
