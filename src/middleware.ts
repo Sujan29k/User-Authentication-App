@@ -21,5 +21,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/signup", "/login", "/profile"], // Specify paths to apply middleware
+  matcher: ["/", "/signup", "/login", "/profile/:path*", "/verifyemail"], // Specify paths to apply middleware
 };
