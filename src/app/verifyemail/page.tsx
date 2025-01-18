@@ -19,7 +19,7 @@ export default function VerifyEmail() {
     }
     useEffect(() => {
       const urlToken = window.location.search.split("=")[1];
-      setToken(urlToken||"");
+      setToken(urlToken || "");
       console.log(urlToken);
     }, []);
     useEffect(() => {

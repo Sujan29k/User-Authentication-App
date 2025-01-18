@@ -1,6 +1,6 @@
-import { verify } from "crypto";
+
 import mongoose from "mongoose";
-import { unique } from "next/dist/build/utils";
+
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,10 +33,10 @@ const userSchema = new mongoose.Schema(
     verifyTokenExpiry: Date,
   },
   {
-    timestamps: true,
+    timestamps: true,//createdAt and updatedAt fields will be added to the document
   }
 );
 
-const User = mongoose.models.user || mongoose.model("user", userSchema);
+const User = mongoose.models.user || mongoose.model("user", userSchema);//checks for the model if doesnot exists creates new one with the name user
 
 export default User;
